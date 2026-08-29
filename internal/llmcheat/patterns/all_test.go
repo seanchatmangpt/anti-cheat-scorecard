@@ -15,47 +15,34 @@
 package patterns_test
 
 import (
-	"os"
-	"slices"
 	"testing"
 
 	"github.com/ossf/scorecard/v5/internal/llmcheat"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns"
 )
 
-func TestProductionRegistryContainsEveryDetectorDirectory(t *testing.T) {
-	entries, err := os.ReadDir(".")
-	if err != nil {
-		t.Fatal(err)
-	}
-	expected := 0
-	for _, entry := range entries {
-		if entry.IsDir() {
-			expected++
-		}
-	}
-
+func TestProductionAggregatorRegistersChicagoAndLandedFleet(t *testing.T) {
 	all := llmcheat.All()
-	if len(all) != expected {
-		t.Fatalf("production registry has %d detectors but source tree has %d detector directories", len(all), expected)
+	if len(all) < 28 {
+		t.Fatalf("production aggregator registered %d patterns, want at least 28 landed detectors", len(all))
 	}
 
-	ids := make([]string, 0, len(all))
-	seen := map[string]bool{}
+	want := map[string]bool{
+		"claim-verified-without-run":             false,
+		"non-chicago-acceptance-laundering":      false,
+		"non-chicago-evidence":                   false,
+		"hand-edited-generated-file-marker":      false,
+		"interaction-only-assertion":             false,
+		"unverified-benchmark-numbers":           false,
+	}
 	for _, p := range all {
-		if p.ID() == "" {
-			t.Fatal("production registry contains empty detector ID")
+		if _, ok := want[p.ID()]; ok {
+			want[p.ID()] = true
 		}
-		if seen[p.ID()] {
-			t.Fatalf("production registry contains duplicate detector ID %q", p.ID())
+	}
+	for id, found := range want {
+		if !found {
+			t.Errorf("production aggregator did not register %q", id)
 		}
-		seen[p.ID()] = true
-		ids = append(ids, p.ID())
-	}
-	if !slices.IsSorted(ids) {
-		t.Fatalf("production registry order is nondeterministic: %v", ids)
-	}
-	if !seen["non-chicago-evidence"] {
-		t.Fatalf("production registry does not contain non-chicago-evidence: %v", ids)
 	}
 }

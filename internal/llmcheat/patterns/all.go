@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package patterns is the production aggregation point for every real
-// internal/llmcheat.Pattern implementation. checks/raw/anti_cheat.go blank
-// imports this package, so a detector directory that is not imported here is
-// dead code in the shipped Anti-Cheat check even if its package tests pass.
+// Package patterns is the single aggregation point for every real
+// internal/llmcheat.Pattern implementation. Each pattern lives in its own
+// subpackage (internal/llmcheat/patterns/<id>/) so detectors can be authored
+// independently while this package provides the one production registration
+// bridge consumed by checks/raw/anti_cheat.go.
 package patterns
 
 import (
@@ -32,6 +33,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/hedgelanguagemasking"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/interactiononlyassertion"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/jsjestmockowned"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nonchicagoacceptancelaundering"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nonchicagoevidence"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/overclaimingsuperlative"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/placeholderloremipsum"

@@ -21,6 +21,8 @@ func TestAntiCheatScansChicagoEvidenceFormats(t *testing.T) {
 		"tests/fixtures/chicago.json",
 		"receipts/chicago.jsonl",
 		"verification/chicago.txt",
+		"verification/chicago.log",
+		"verification/chicago.sarif",
 		".github/workflows/chicago.yml",
 		"scripts/chicago.py",
 	} {
