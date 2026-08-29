@@ -17,6 +17,7 @@ package syntaxgraph
 import "testing"
 
 func TestParseGoWalksCanonicalSyntaxGraph(t *testing.T) {
+	t.Parallel()
 	source := []byte(`package p
 import "net/http/httptest"
 func TestChicago(t *testing.T) {
@@ -51,6 +52,7 @@ func TestChicago(t *testing.T) {
 }
 
 func TestDigestIsDeterministicAndContentSensitive(t *testing.T) {
+	t.Parallel()
 	a := []byte("package p\nfunc f(){ println(true) }\n")
 	g1, err := ParseGo("p.go", a)
 	if err != nil {
@@ -74,6 +76,7 @@ func TestDigestIsDeterministicAndContentSensitive(t *testing.T) {
 }
 
 func TestMalformedGoIsNotAdmitted(t *testing.T) {
+	t.Parallel()
 	if _, err := ParseGo("broken.go", []byte("package p\nfunc {")); err == nil {
 		t.Fatal("malformed Go syntax was admitted")
 	}
