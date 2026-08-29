@@ -13,6 +13,59 @@ project. This document describes the contribution guidelines for the project.
 > For more details, see the [LF DCO wiki](https://wiki.linuxfoundation.org/dco)
 > or [this Pi-hole signoff guide](https://docs.pi-hole.net/guides/github/how-to-signoff/).
 
+## Adding a new Anti-Cheat pattern (fork-specific)
+
+This section is specific to this fork (`seanchatmangpt/anti-cheat-scorecard`)
+and covers the `Anti-Cheat` check's 52+ pattern detectors — everything else
+in this document is upstream Scorecard's own contributing guide, unchanged.
+
+A pattern is a self-contained Go subpackage. To add one:
+
+1. Pick a category from `internal/llmcheat/llmcheat.go`'s doc comment:
+   `fabricated-claims`, `hollow-implementation`, `test-integrity-violation`,
+   `generated-artifact-tampering`, `semantic-web-integrity`,
+   `determinism-and-provenance-violation`, or
+   `complexity-and-surface-obfuscation`.
+2. Create `internal/llmcheat/patterns/<yourid>/detect.go`: implement
+   `llmcheat.Pattern` (`ID()`, `Category()`, `Detect(path string, content
+   []byte) []llmcheat.Match`), and self-register in `init()` via
+   `llmcheat.Register(...)`. Look at any existing pattern package (e.g.
+   `internal/llmcheat/patterns/claimalivewithoutreceipt/`) for the real,
+   working shape — every one of the 52 is a genuine, non-stub reference
+   implementation, not a template to fill in blindly.
+3. Add `internal/llmcheat/patterns/<yourid>/detect_test.go`: Chicago-style —
+   real fixture content in, real assertions on the returned `[]llmcheat.Match`
+   out (length, `PatternID`, `Category`, `Line`). No mocking: `Detect` has no
+   collaborators to mock. At minimum, one fixture that should match and one
+   that shouldn't.
+4. Add a blank import for your new package to
+   `internal/llmcheat/patterns/all.go` — this is the one file every pattern
+   author touches, since it's the single production registration bridge. If
+   you forget this step, your pattern compiles and its own tests pass, but
+   it's never actually registered at runtime (`checks/raw/anti_cheat.go`
+   only sees what `all.go` blank-imports) — this exact gap bit this fork's
+   own early build twice; `go test -run
+   TestProductionAggregatorRegistersChicagoAndLandedFleet ./internal/llmcheat/patterns/...`
+   is a real, fast check that would have caught it, run it before opening a PR.
+5. Verify for real, not just visually:
+   ```
+   gofmt -l internal/llmcheat/patterns/<yourid>/
+   go vet ./internal/llmcheat/patterns/<yourid>/...
+   go test ./internal/llmcheat/patterns/<yourid>/...
+   go build ./...
+   ```
+6. Optionally, smoke-test the full pipeline against a real repo:
+   ```
+   go build -o /tmp/acs .
+   /tmp/acs --local /path/to/any/repo --checks Anti-Cheat --format json
+   ```
+
+New pattern categories/probes (rather than individual detectors within the 7
+existing ones) also need a new probe wrapper under `probes/llmCheat<Name>/`
+(mirroring any existing one, e.g. `probes/llmCheatFabricatedClaims/`) and a
+new entry in `checks/evaluation/anti_cheat.go`'s `expectedProbes` list — a
+bigger change, open an issue first to discuss the new category.
+
 <!-- vim-markdown-toc GFM -->
 
 * [Contributing code](#contributing-code)
