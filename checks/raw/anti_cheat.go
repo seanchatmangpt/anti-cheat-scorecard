@@ -41,17 +41,16 @@ var antiCheatSkipDirs = []string{
 }
 
 // antiCheatScanExtensions are the file extensions worth running pattern
-// detectors against. Deliberately broad across languages (this is the
-// direct fix for the gap the fork's own predecessor investigation found:
-// zero RDF/Turtle/SPARQL/SHACL coverage in the sibling anti-llm-cheat-lsp
-// tool) rather than narrowly Go/security-metadata-shaped like the rest of
-// Scorecard's raw collectors.
+// detectors against. Deliberately broad across languages and evidence/report
+// formats: fabricated standing often lives in receipts, logs, SARIF, JSON,
+// or prose rather than in application source.
 var antiCheatScanExtensions = map[string]bool{
 	".go": true, ".py": true, ".rs": true, ".ts": true, ".tsx": true,
 	".js": true, ".jsx": true, ".ex": true, ".exs": true, ".java": true,
 	".rb": true, ".ttl": true, ".rq": true, ".shacl": true, ".tera": true,
 	".sh": true, ".bash": true, ".toml": true, ".yml": true, ".yaml": true,
-	".md": true,
+	".md": true, ".txt": true, ".log": true, ".json": true, ".jsonl": true,
+	".sarif": true,
 }
 
 func shouldScanForAntiCheat(path string) (bool, error) {
