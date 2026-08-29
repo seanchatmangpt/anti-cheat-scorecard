@@ -32,7 +32,7 @@ const patternID = "premature-option-collapse"
 const category = "option-space-collapse"
 
 var commitmentRe = regexp.MustCompile(`(?i)\b(only (?:viable |reasonable |safe )?option|no (?:other )?alternative|must use|must choose|chosen approach|selected approach|we chose|we selected|the solution is)\b`)
-var explorationRe = regexp.MustCompile(`(?i)\b(alternatives?|options?|candidates?|census|inventory|compare|comparison|trade[- ]?offs?|reserve|fallback|rollback|reversible|contingency|falsifier|next lawful route)\b`)
+var explorationRe = regexp.MustCompile(`(?i)(\b(alternatives?|candidates?|census|inventory|compare|comparison|trade[- ]?offs?|reserve|fallback|rollback|reversible|contingency|falsifier|next lawful route)\b|\boptions?\s*:)`)
 var normativeRe = regexp.MustCompile(`(?i)\b(detects?|detector|rule|anti[- ]pattern|counterexample|example|must not|should flag|rejects?|forbids?)\b`)
 
 var evidenceExtensions = map[string]bool{
