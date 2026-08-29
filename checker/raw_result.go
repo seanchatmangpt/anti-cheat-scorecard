@@ -27,6 +27,7 @@ import (
 //
 //nolint:govet
 type RawResults struct {
+	AntiCheatResults            AntiCheatData
 	BinaryArtifactResults       BinaryArtifactData
 	BranchProtectionResults     BranchProtectionsData
 	CIIBestPracticesResults     CIIBestPracticesData
@@ -178,6 +179,26 @@ type LicenseFile struct {
 // Some repos may have more than one license.
 type LicenseData struct {
 	LicenseFiles []LicenseFile
+}
+
+// AntiCheatMatch is one occurrence of a detected LLM-cheat pattern in one file.
+// It is the checker-layer projection of internal/llmcheat.Match (that package
+// deliberately has no dependency on checker, so the collector in
+// checks/raw/anti_cheat.go converts one into the other).
+type AntiCheatMatch struct {
+	PatternID string
+	Category  string
+	Path      string
+	Line      uint
+	Message   string
+	Severity  string
+}
+
+// AntiCheatData contains the raw results for the Anti-Cheat check: every
+// match found by every registered internal/llmcheat pattern detector across
+// every scanned file in the repository.
+type AntiCheatData struct {
+	Matches []AntiCheatMatch
 }
 
 // SBOM details.

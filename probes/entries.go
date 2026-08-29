@@ -65,6 +65,14 @@ import (
 	"github.com/ossf/scorecard/v5/probes/topLevelPermissions"
 	"github.com/ossf/scorecard/v5/probes/unsafeblock"
 	"github.com/ossf/scorecard/v5/probes/webhooksUseSecrets"
+
+	"github.com/ossf/scorecard/v5/probes/llmCheatComplexityObfuscation"
+	"github.com/ossf/scorecard/v5/probes/llmCheatDeterminismViolation"
+	"github.com/ossf/scorecard/v5/probes/llmCheatFabricatedClaims"
+	"github.com/ossf/scorecard/v5/probes/llmCheatGeneratedArtifactTampering"
+	"github.com/ossf/scorecard/v5/probes/llmCheatHollowImplementation"
+	"github.com/ossf/scorecard/v5/probes/llmCheatSemanticWebIntegrity"
+	"github.com/ossf/scorecard/v5/probes/llmCheatTestIntegrityViolation"
 )
 
 // ProbeImpl is the implementation of a probe.
@@ -163,6 +171,15 @@ var (
 		jobLevelPermissions.Run,
 		topLevelPermissions.Run,
 	}
+	AntiCheat = []ProbeImpl{
+		llmCheatFabricatedClaims.Run,
+		llmCheatHollowImplementation.Run,
+		llmCheatTestIntegrityViolation.Run,
+		llmCheatGeneratedArtifactTampering.Run,
+		llmCheatSemanticWebIntegrity.Run,
+		llmCheatDeterminismViolation.Run,
+		llmCheatComplexityObfuscation.Run,
+	}
 
 	// Probes which aren't included by any checks.
 	// These still need to be listed so they can be called with --probes.
@@ -182,6 +199,7 @@ var (
 //nolint:gochecknoinits
 func init() {
 	All = concatMultipleProbes([][]ProbeImpl{
+		AntiCheat,
 		BinaryArtifacts,
 		CIIBestPractices,
 		CITests,

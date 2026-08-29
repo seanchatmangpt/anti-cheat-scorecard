@@ -12,6 +12,43 @@
 
 <img align="right" src="artwork/openssf_security_compressed.png" width="200" height="400">
 
+> **This repository is `seanchatmangpt/anti-cheat-scorecard`, a fork of
+> [`ossf/scorecard`](https://github.com/ossf/scorecard).** It is not affiliated with
+> or endorsed by the OpenSSF, and its badges above still point at upstream's own
+> real status (kept intact — they document the code this fork inherited, not this
+> fork's own CI). Everything below this notice is upstream's original README,
+> unedited, and still accurately describes the ~20 real supply-chain-security
+> checks this fork inherited unchanged.
+>
+> **What's genuinely new here:** one additional check, **`Anti-Cheat`**
+> (`checks/anti_cheat.go`, `checks/raw/anti_cheat.go`,
+> `checks/evaluation/anti_cheat.go`), built by repurposing Scorecard's own proven
+> probe architecture (`probes/<name>/{impl.go,def.yml,impl_test.go}`,
+> `internal/probes`, `zrunner`) for a different question than upstream Scorecard
+> asks. Upstream asks *"is this repo's supply chain secured?"* — license, branch
+> protection, SAST, signed releases, pinned dependencies, and so on. `Anti-Cheat`
+> asks *"does this repo's own code and history contain a fabricated, hollow, or
+> unfalsifiable claim of correctness?"* — 50 independent pattern detectors under
+> [`internal/llmcheat/patterns/`](internal/llmcheat/patterns/), grouped into 7
+> categories (fabricated claims, hollow implementations, test-integrity
+> violations, generated-artifact tampering, RDF/SPARQL/SHACL integrity,
+> determinism/provenance violations, complexity-driven obfuscation), each its own
+> self-contained Go subpackage with real Chicago-style tests (no mocking — see
+> `~/.claude/rules/testing-chicago-style.md`'s discipline, which this fork's own
+> `test-integrity-violation` category exists specifically to detect elsewhere).
+>
+> This check consolidates what was previously scattered across roughly 177 files
+> in about 31 sibling repositories (ad hoc `scripts/*.py` variants of the same
+> idea) and a separate, narrower Rust LSP tool
+> ([`anti-llm-cheat-lsp`](https://github.com/seanchatmangpt/anti-llm-cheat-lsp),
+> which had zero RDF/Turtle/SPARQL coverage and two dead rule stubs) into one
+> tool with one real, extensible architecture — reusing Scorecard's own
+> `def.yml`/`impl.go`/generated-docs/SARIF/OIDC-publish conventions rather than
+> inventing a parallel one. See `checks/anti_cheat.go` for the full rationale.
+>
+> Run it the same way you'd run any Scorecard check:
+> `go run ./cmd/scorecard --local /path/to/repo --checks Anti-Cheat --format json`
+
 ## Overview
 
 -   [What Is Scorecard?](#what-is-scorecard)
