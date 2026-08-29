@@ -1,0 +1,4 @@
+name: llmCheatOptionSpaceCollapse
+description: Detects DfCM violations that collapse reversible lawful options before sufficient comparison, omit reserve or rollback routes, or terminalize work on one failed edge
+requirement: The repository should preserve lawful alternatives and reversibility until selection is justified, and should route failures to reserves or typed boundaries rather than silently collapsing the option space
+type: code
