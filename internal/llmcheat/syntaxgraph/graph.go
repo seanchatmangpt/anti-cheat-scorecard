@@ -38,20 +38,20 @@ import (
 
 // Node is one syntax object in deterministic pre-order.
 type Node struct {
-	ID        int
-	ParentID  int
 	Kind      string
 	Role      string
 	Value     string
-	Line      uint
+	ID        int
+	ParentID  int
 	StartByte int
 	EndByte   int
+	Line      uint
 }
 
 // Edge is a canonical relationship between syntax objects.
 type Edge struct {
-	From      int
 	Predicate string
+	From      int
 	To        int
 }
 
@@ -94,17 +94,17 @@ func ParseGo(path string, content []byte) (*Graph, error) {
 		kind := strings.TrimPrefix(reflect.TypeOf(n).String(), "*ast.")
 		role, value := classify(fset, n)
 		g.Nodes = append(g.Nodes, Node{
-			ID:        id,
-			ParentID:  parent,
 			Kind:      kind,
 			Role:      role,
 			Value:     value,
-			Line:      uint(start.Line), //nolint:gosec // parser line numbers are non-negative and bounded by input size
+			ID:        id,
+			ParentID:  parent,
 			StartByte: start.Offset,
 			EndByte:   end.Offset,
+			Line:      uint(start.Line),
 		})
 		if parent >= 0 {
-			g.Edges = append(g.Edges, Edge{From: parent, Predicate: "contains", To: id})
+			g.Edges = append(g.Edges, Edge{Predicate: "contains", From: parent, To: id})
 		}
 		stack = append(stack, id)
 		return true
