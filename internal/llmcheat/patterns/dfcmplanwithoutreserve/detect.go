@@ -28,15 +28,19 @@ const (
 
 var (
 	dfcmRe = regexp.MustCompile(
-		`(?i)\b(dfcm|design for combinatorial maximalism|combinatorial maximalism|` +
-			`maximi[sz]e reversible options)\b`,
+		`(?i)\b(` +
+			`dfcm|design for combinatorial maximalism|combinatorial maximalism|` +
+			`maximi[sz]e reversible options` +
+			`)\b`,
 	)
 	planRe = regexp.MustCompile(
 		`(?i)\b(plan|strategy|roadmap|execution|implementation|workflow|work queue|primary|takt|iteration)\b`,
 	)
 	breadthRe = regexp.MustCompile(
-		`(?i)\b(reserves?|fallbacks?|alternatives?|options?|candidates?|` +
-			`contingenc(?:y|ies)|secondary route|next lawful route)\b`,
+		`(?i)\b(` +
+			`reserves?|fallbacks?|alternatives?|options?|candidates?|contingenc(?:y|ies)|` +
+			`secondary route|next lawful route` +
+			`)\b`,
 	)
 	reversibilityRe = regexp.MustCompile(
 		`(?i)\b(rollback|reversible|revert|undo|restore|compensat(?:e|ion)|replay)\b`,
