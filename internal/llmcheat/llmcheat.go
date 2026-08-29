@@ -43,11 +43,11 @@ const (
 type Match struct {
 	// PatternID must equal the owning Pattern's ID().
 	PatternID string
-	// Category groups related patterns for the Anti-Cheat check's probes
-	// (see checks/anti_cheat.go and the 7 probes/llmCheat* wrappers) — one
+	// Category groups related patterns for the Anti-Cheat check's probes — one
 	// of: fabricated-claims, hollow-implementation, test-integrity-violation,
 	// generated-artifact-tampering, semantic-web-integrity,
-	// determinism-and-provenance-violation, complexity-and-surface-obfuscation.
+	// determinism-and-provenance-violation, complexity-and-surface-obfuscation,
+	// option-space-collapse.
 	Category string
 	// Path is the file-relative path the match was found in.
 	Path string
@@ -62,16 +62,14 @@ type Match struct {
 
 // Pattern is one independent, orthogonal cheat-pattern detector. Each
 // implementation lives in its own internal/llmcheat/patterns/<id>/ package
-// (its own Go package, not just its own file) specifically so 50 of them can
-// be authored concurrently by independent agents with zero symbol-collision
-// risk — only this shared contract and internal/llmcheat/patterns/all.go's
-// blank-import list are ever touched centrally.
+// so independently-authored detectors avoid symbol collisions while the
+// production aggregator remains the explicit registration boundary.
 type Pattern interface {
 	// ID is a stable, kebab-case identifier, e.g. "claim-alive-without-receipt".
 	// It must be unique across every registered pattern (Register panics on
 	// a duplicate) and must match the const ID the pattern package defines.
 	ID() string
-	// Category is one of the seven Anti-Cheat categories listed on Match.Category.
+	// Category is one of the eight Anti-Cheat categories listed on Match.Category.
 	Category() string
 	// Detect scans one file's full content and returns zero or more matches.
 	// Implementations must be pure and side-effect-free: no filesystem, no
@@ -83,10 +81,7 @@ var registered = map[string]Pattern{}
 
 // Register adds a Pattern to the shared registry. Call this from a pattern
 // package's init() — never call it with the same ID twice; a second call
-// with a colliding ID panics loudly at program start (a real, cheap
-// duplicate-ID court: it is far better for 50 independently-authored
-// packages to fail fast at binary startup than to silently shadow one
-// another's detection coverage).
+// with a colliding ID panics loudly at program start.
 func Register(p Pattern) {
 	if p == nil {
 		panic("llmcheat: Register called with a nil Pattern")
@@ -102,9 +97,7 @@ func Register(p Pattern) {
 }
 
 // All returns every registered pattern, sorted by ID for deterministic
-// iteration order (determinism matters here specifically: this tool detects
-// nondeterminism-disguised-as-deterministic as one of its own patterns, so
-// its own scan order must not be a case of exactly that).
+// iteration order.
 func All() []Pattern {
 	out := make([]Pattern, 0, len(registered))
 	for _, p := range registered {
@@ -115,8 +108,7 @@ func All() []Pattern {
 }
 
 // Reset clears the registry. Test-only: lets pattern-package tests that
-// construct a Pattern directly (bypassing init()-time Register) avoid
-// polluting/depending on the global registry state across test binaries.
+// construct a Pattern directly avoid depending on global registry state.
 func Reset() {
 	registered = map[string]Pattern{}
 }
