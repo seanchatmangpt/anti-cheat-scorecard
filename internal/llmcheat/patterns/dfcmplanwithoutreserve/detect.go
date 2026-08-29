@@ -21,13 +21,31 @@ import (
 	"github.com/ossf/scorecard/v5/internal/llmcheat"
 )
 
-const patternID = "dfcm-plan-without-reserve"
-const category = "option-space-collapse"
+const (
+	patternID = "dfcm-plan-without-reserve"
+	category  = "option-space-collapse"
+)
 
-var dfcmRe = regexp.MustCompile(`(?i)\b(dfcm|design for combinatorial maximalism|combinatorial maximalism|maximi[sz]e reversible options)\b`)
-var planRe = regexp.MustCompile(`(?i)\b(plan|strategy|roadmap|execution|implementation|workflow|work queue|primary|takt|iteration)\b`)
-var breadthRe = regexp.MustCompile(`(?i)\b(reserves?|fallbacks?|alternatives?|options?|candidates?|contingenc(?:y|ies)|secondary route|next lawful route)\b`)
-var reversibilityRe = regexp.MustCompile(`(?i)\b(rollback|reversible|revert|undo|restore|compensat(?:e|ion)|replay)\b`)
+var (
+	dfcmRe = regexp.MustCompile(
+		`(?i)\b(` +
+			`dfcm|design for combinatorial maximalism|combinatorial maximalism|` +
+			`maximi[sz]e reversible options` +
+			`)\b`,
+	)
+	planRe = regexp.MustCompile(
+		`(?i)\b(plan|strategy|roadmap|execution|implementation|workflow|work queue|primary|takt|iteration)\b`,
+	)
+	breadthRe = regexp.MustCompile(
+		`(?i)\b(` +
+			`reserves?|fallbacks?|alternatives?|options?|candidates?|contingenc(?:y|ies)|` +
+			`secondary route|next lawful route` +
+			`)\b`,
+	)
+	reversibilityRe = regexp.MustCompile(
+		`(?i)\b(rollback|reversible|revert|undo|restore|compensat(?:e|ion)|replay)\b`,
+	)
+)
 
 var planExtensions = map[string]bool{
 	".md": true, ".txt": true, ".json": true, ".yml": true, ".yaml": true, ".toml": true,
@@ -64,9 +82,13 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 		Category:  category,
 		Path:      path,
 		Line:      line,
-		Message:   fmt.Sprintf("DfCM execution plan is missing %s; the plan claims combinatorial maximalism while collapsing future routes", strings.Join(missing, " and ")),
-		Severity:  llmcheat.SeverityHigh,
+		Message: fmt.Sprintf(
+			"DfCM execution plan is missing %s; the plan claims combinatorial maximalism while collapsing future routes",
+			strings.Join(missing, " and "),
+		),
+		Severity: llmcheat.SeverityHigh,
 	}}
 }
 
+//nolint:gochecknoinits // package registration is the production plugin contract.
 func init() { llmcheat.Register(newDetector()) }
