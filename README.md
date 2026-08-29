@@ -46,8 +46,9 @@
 > `def.yml`/`impl.go`/generated-docs/SARIF/OIDC-publish conventions rather than
 > inventing a parallel one. See `checks/anti_cheat.go` for the full rationale.
 >
-> Run it the same way you'd run any Scorecard check:
-> `go run ./cmd/scorecard --local /path/to/repo --checks Anti-Cheat --format json`
+> Run it the same way you'd run any Scorecard check (from this module's root —
+> real, end-to-end verified against this repo's own tree before this line was written):
+> `go run . --local /path/to/repo --checks Anti-Cheat --format json`
 
 ## Overview
 
