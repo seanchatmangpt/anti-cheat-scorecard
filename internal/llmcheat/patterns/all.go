@@ -13,17 +13,23 @@
 // limitations under the License.
 
 // Package patterns is the single aggregation point for every real
-// internal/llmcheat.Pattern implementation. Each pattern lives in its own
-// subpackage (internal/llmcheat/patterns/<id>/) so 50 of them can be
-// authored concurrently by independent agents with zero symbol-collision
-// risk; this file is the one place — written and maintained centrally, not
-// by any pattern-writing agent — that blank-imports every subpackage so its
-// init() (which calls llmcheat.Register) actually runs.
-//
-// checks/raw/anti_cheat.go blank-imports this package so the real registry
-// is populated before internal/llmcheat.All() is called.
+// internal/llmcheat.Pattern implementation. checks/raw/anti_cheat.go blank
+// imports this package; therefore every production detector MUST be blank
+// imported here or its init-time registration never runs in the shipped
+// Anti-Cheat checker.
 package patterns
 
-// This blank-import block is appended to as each pattern subpackage lands —
-// see the per-pattern subpackages under this directory for the real
-// detection logic.
+import (
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/claimverifiedwithoutrun"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/gopanictodostub"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/hedgelanguagemasking"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nonchicagoevidence"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/overclaimingsuperlative"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/placeholderloremipsum"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/pythonnotimplementedshipped"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/rusttodounimplementedmacro"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/selfcontradictingstatus"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/standingvocabularymisuse"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/tsthrownotimplemented"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/unverifiedbenchmarknumbers"
+)
