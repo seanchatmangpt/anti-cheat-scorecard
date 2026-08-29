@@ -13,45 +13,68 @@
 // limitations under the License.
 
 // Package llmCheatOptionSpaceCollapse projects DfCM option-space-collapse
-// detector matches from the shared Anti-Cheat raw result into Scorecard
-// findings. It is deliberately a distinct probe so irreversible commitment
-// and failure-to-preserve alternatives cannot be diluted into a generic
-// complexity score.
+// matches from the shared Anti-Cheat raw result into Scorecard findings. It
+// is deliberately a distinct probe so irreversible commitment and failure to
+// preserve alternatives cannot be diluted into a generic complexity score.
 package llmCheatOptionSpaceCollapse
 
 import (
+	"embed"
 	"fmt"
 
 	"github.com/ossf/scorecard/v5/checker"
 	"github.com/ossf/scorecard/v5/finding"
-	"github.com/ossf/scorecard/v5/internal/llmcheat"
+	"github.com/ossf/scorecard/v5/internal/checknames"
+	"github.com/ossf/scorecard/v5/internal/probes"
+	"github.com/ossf/scorecard/v5/probes/internal/utils/uerror"
 )
 
+func init() {
+	probes.MustRegister(Probe, Run, []checknames.CheckName{checknames.AntiCheat})
+}
+
+//go:embed *.yml
+var fs embed.FS
+
+// Probe is this probe's registered name.
 const Probe = "llmCheatOptionSpaceCollapse"
+
 const category = "option-space-collapse"
 
-func Run(raw *checker.RawResults) ([]finding.Finding, string) {
-	findings := make([]finding.Finding, 0)
-	for _, match := range raw.AntiCheat.Matches {
-		if match.Category != category {
+// Run filters the shared Anti-Cheat raw results to DfCM option-space collapse:
+// one OutcomeFalse finding per violation, or one OutcomeTrue finding when the
+// category is clean.
+func Run(raw *checker.RawResults) ([]finding.Finding, string, error) {
+	if raw == nil {
+		return nil, "", fmt.Errorf("%w: raw", uerror.ErrNil)
+	}
+
+	var findings []finding.Finding
+	for _, m := range raw.AntiCheatResults.Matches {
+		if m.Category != category {
 			continue
 		}
-		outcome := finding.OutcomeFalse
-		if match.Severity == string(llmcheat.SeverityLow) {
-			outcome = finding.OutcomeTrue
+		loc := &finding.Location{Path: m.Path, Type: finding.FileTypeSource}
+		if m.Line > 0 {
+			line := m.Line
+			loc.LineStart = &line
+			loc.LineEnd = &line
 		}
-		findings = append(findings, finding.Finding{
-			Probe:   Probe,
-			Outcome: outcome,
-			Message: fmt.Sprintf("%s: %s — %s", match.Category, match.PatternID, match.Message),
-			Location: &finding.Location{
-				Path: match.Path,
-				Line: &finding.Line{Start: match.Line, End: match.Line},
-			},
-		})
+		text := fmt.Sprintf("[%s] %s", m.PatternID, m.Message)
+		f, err := finding.NewFalse(fs, Probe, text, loc)
+		if err != nil {
+			return nil, Probe, fmt.Errorf("create finding: %w", err)
+		}
+		findings = append(findings, *f)
 	}
+
 	if len(findings) == 0 {
-		findings = append(findings, finding.Finding{Probe: Probe, Outcome: finding.OutcomeTrue})
+		f, err := finding.NewTrue(fs, Probe, "no option-space-collapse patterns detected", nil)
+		if err != nil {
+			return nil, Probe, fmt.Errorf("create finding: %w", err)
+		}
+		findings = append(findings, *f)
 	}
-	return findings, ""
+
+	return findings, Probe, nil
 }
