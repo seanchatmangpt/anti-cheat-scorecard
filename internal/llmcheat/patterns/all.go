@@ -21,12 +21,10 @@
 // This list is regenerated from the real directories on disk (each verified
 // to have a genuine detect.go, not an empty in-progress directory) — not
 // hand-maintained incrementally, which is exactly how the previous version
-// of this file silently fell behind: 20 real, already-committed, already
-// individually-tested pattern packages existed on disk without ever being
-// blank-imported here, meaning their init() never ran and they were never
-// actually registered at runtime despite passing their own unit tests (which
-// call the detector directly, bypassing the registry). Caught and fixed in
-// the same commit that completed pattern #50 — see git history.
+// of this file silently fell behind: real, already-committed, individually-
+// tested pattern packages existed on disk without ever being blank-imported
+// here, meaning their init() never ran and they were never registered at
+// runtime. The production registry test makes that drift falsifiable.
 package patterns
 
 import (
@@ -37,6 +35,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/contractsignaturedrift"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/deadalternativebranch"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/declaredinvariantnotenforced"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/dfcmplanwithoutreserve"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/duplicatenearidenticalfunction"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/emptycatchswallow"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/errormessagewrongcontext"
@@ -50,6 +49,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/handeditedgeneratedfilemarker"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/hedgelanguagemasking"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/interactiononlyassertion"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/irreversibleactionwithoutrollback"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/jsjestmockowned"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/lockfilechecksummismatch"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/lockfilehandeditedwithouttoolrun"
@@ -60,6 +60,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nondeterministicsourceindeterministicpath"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/overclaimingsuperlative"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/placeholderloremipsum"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/prematureoptioncollapse"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/pythonhollowfunction"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/pythonnotimplementedshipped"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/pythonunittestmockowned"
@@ -76,6 +77,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/standingvocabularymisuse"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/tautologicalassertion"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/teraundefinedtemplatevariable"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/terminalfailurewithoutreserve"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/tsthrownotimplemented"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/ttlclaimtriplewithoutreceipt"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/ttlprefixdeclaredunused"
