@@ -23,22 +23,16 @@ import (
 	"github.com/ossf/scorecard/v5/probes/llmCheatFabricatedClaims"
 	"github.com/ossf/scorecard/v5/probes/llmCheatGeneratedArtifactTampering"
 	"github.com/ossf/scorecard/v5/probes/llmCheatHollowImplementation"
+	"github.com/ossf/scorecard/v5/probes/llmCheatOptionSpaceCollapse"
 	"github.com/ossf/scorecard/v5/probes/llmCheatSemanticWebIntegrity"
 	"github.com/ossf/scorecard/v5/probes/llmCheatTestIntegrityViolation"
 )
 
 // AntiCheat applies the score policy for the Anti-Cheat check.
 //
-// Each of the 7 probes below wraps one category of the shared
-// internal/llmcheat pattern registry (50 independent pattern detectors
-// across the 7 categories — see internal/llmcheat/patterns/). A probe is
-// "clean" for a repo when it produced zero OutcomeFalse findings (no cheat
-// pattern in its category was found anywhere in the scanned tree); the
-// score is the proportion of the 7 categories that came back clean, matching
-// checker.CreateProportionalScore's existing convention elsewhere in this
-// package rather than a hand-maintained per-probe point table (a fixed
-// per-probe table like License's would need editing every time a category
-// gains or loses weight — proportional-over-categories doesn't).
+// Each probe wraps one category of the shared internal/llmcheat pattern
+// registry. A probe is clean when it produced zero OutcomeFalse findings;
+// the score is the proportion of the eight admitted categories that are clean.
 func AntiCheat(name string,
 	findings []finding.Finding,
 	dl checker.DetailLogger,
@@ -51,6 +45,7 @@ func AntiCheat(name string,
 		llmCheatSemanticWebIntegrity.Probe,
 		llmCheatDeterminismViolation.Probe,
 		llmCheatComplexityObfuscation.Probe,
+		llmCheatOptionSpaceCollapse.Probe,
 	}
 
 	if !finding.UniqueProbesEqual(findings, expectedProbes) {
