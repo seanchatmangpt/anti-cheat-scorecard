@@ -89,13 +89,6 @@ func TestDetect_DirtyStubPanic_ProducesMatch(t *testing.T) {
 	if len(matches) < 1 {
 		t.Fatalf("Detect() on dirty fixture = %d matches, want >= 1", len(matches))
 	}
-	for _, m := range matches {
-		if m.PatternID != llmcheat.PatternID(patternID) {
-			// placeholder; replaced below with a direct string comparison
-			// once PatternID's real string value is confirmed
-			_ = m
-		}
-	}
 
 	got := matches[0]
 	if got.PatternID != patternID {
@@ -107,11 +100,20 @@ func TestDetect_DirtyStubPanic_ProducesMatch(t *testing.T) {
 	if got.Path != "store/save.go" {
 		t.Errorf("Match.Path = %q, want %q", got.Path, "store/save.go")
 	}
-	// The panic("TODO: implement") line is the 22nd line of dirtySource
-	// (counting the leading blank line inside the raw string literal as
-	// line 0 before the first real content line, per bufio.Scanner's
-	// 1-based counting starting at "package store").
-	const wantLine = 22
+	// Derive the expected 1-based line number directly from the fixture
+	// text itself (rather than a hand-counted literal, which is easy to
+	// get off-by-one on a multi-line raw string) so the assertion stays
+	// correct even if the fixture is edited later.
+	wantLine := uint(0)
+	for i, line := range strings.Split(dirtySource, "\n") {
+		if strings.Contains(line, `panic("TODO`) {
+			wantLine = uint(i + 1)
+			break
+		}
+	}
+	if wantLine == 0 {
+		t.Fatal("test fixture bug: dirtySource does not contain the expected panic(\"TODO literal")
+	}
 	if got.Line != wantLine {
 		t.Errorf("Match.Line = %d, want %d", got.Line, wantLine)
 	}

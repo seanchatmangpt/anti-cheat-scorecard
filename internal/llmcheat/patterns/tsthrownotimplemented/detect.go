@@ -153,7 +153,11 @@ func isRelevantFile(path string) bool {
 // not the same hollow-implementation smell as one left in production code.
 func isTestPath(path string) bool {
 	slashPath := filepath.ToSlash(path)
-	lowerPath := strings.ToLower(slashPath)
+	// Prepend a leading "/" before lower-casing so a path with no
+	// directory prefix at all (e.g. "test/store.ts", relative to some
+	// repo root) still matches the "/test" substring check the same way
+	// "src/test/store.ts" would.
+	lowerPath := "/" + strings.ToLower(strings.TrimPrefix(slashPath, "/"))
 
 	if strings.Contains(lowerPath, "/test") {
 		return true
