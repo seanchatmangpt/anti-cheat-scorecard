@@ -83,34 +83,74 @@ type ProbeImpl func(*checker.RawResults) ([]finding.Finding, string, error)
 type IndependentProbeImpl func(*checker.CheckRequest) ([]finding.Finding, string, error)
 
 var (
+	// All represents all the probes.
 	All []ProbeImpl
+	// SecurityPolicy is all the probes for the
+	// SecurityPolicy check.
 	SecurityPolicy = []ProbeImpl{
 		securityPolicyPresent.Run,
 		securityPolicyContainsLinks.Run,
 		securityPolicyContainsVulnerabilityDisclosure.Run,
 		securityPolicyContainsText.Run,
 	}
-	DependencyToolUpdates = []ProbeImpl{dependencyUpdateToolConfigured.Run}
-	Fuzzing               = []ProbeImpl{fuzzed.Run}
-	Packaging             = []ProbeImpl{packagedWithAutomatedWorkflow.Run}
-	License               = []ProbeImpl{hasLicenseFile.Run, hasFSFOrOSIApprovedLicense.Run}
-	Contributors          = []ProbeImpl{contributorsFromOrgOrCompany.Run}
-	Vulnerabilities       = []ProbeImpl{hasOSVVulnerabilities.Run}
-	CodeReview            = []ProbeImpl{codeApproved.Run}
-	SAST                  = []ProbeImpl{sastToolConfigured.Run, sastToolRunsOnAllCommits.Run}
-	DangerousWorkflows    = []ProbeImpl{hasDangerousWorkflowScriptInjection.Run, hasDangerousWorkflowUntrustedCheckout.Run}
+	// DependencyToolUpdates is all the probes for the
+	// DependencyUpdateTool check.
+	DependencyToolUpdates = []ProbeImpl{
+		dependencyUpdateToolConfigured.Run,
+	}
+	Fuzzing = []ProbeImpl{
+		fuzzed.Run,
+	}
+	Packaging = []ProbeImpl{
+		packagedWithAutomatedWorkflow.Run,
+	}
+	License = []ProbeImpl{
+		hasLicenseFile.Run,
+		hasFSFOrOSIApprovedLicense.Run,
+	}
+	Contributors = []ProbeImpl{
+		contributorsFromOrgOrCompany.Run,
+	}
+	Vulnerabilities = []ProbeImpl{
+		hasOSVVulnerabilities.Run,
+	}
+	CodeReview = []ProbeImpl{
+		codeApproved.Run,
+	}
+	SAST = []ProbeImpl{
+		sastToolConfigured.Run,
+		sastToolRunsOnAllCommits.Run,
+	}
+	DangerousWorkflows = []ProbeImpl{
+		hasDangerousWorkflowScriptInjection.Run,
+		hasDangerousWorkflowUntrustedCheckout.Run,
+	}
 	Maintained = []ProbeImpl{
 		archived.Run,
 		hasRecentCommits.Run,
 		issueActivityByProjectMember.Run,
 		createdRecently.Run,
 	}
-	CIIBestPractices = []ProbeImpl{hasOpenSSFBadge.Run}
-	BinaryArtifacts  = []ProbeImpl{hasUnverifiedBinaryArtifacts.Run}
-	Webhook          = []ProbeImpl{webhooksUseSecrets.Run}
-	CITests          = []ProbeImpl{testsRunInCI.Run}
-	SBOM             = []ProbeImpl{hasSBOM.Run, hasReleaseSBOM.Run}
-	SignedReleases   = []ProbeImpl{releasesAreSigned.Run, releasesHaveProvenance.Run}
+	CIIBestPractices = []ProbeImpl{
+		hasOpenSSFBadge.Run,
+	}
+	BinaryArtifacts = []ProbeImpl{
+		hasUnverifiedBinaryArtifacts.Run,
+	}
+	Webhook = []ProbeImpl{
+		webhooksUseSecrets.Run,
+	}
+	CITests = []ProbeImpl{
+		testsRunInCI.Run,
+	}
+	SBOM = []ProbeImpl{
+		hasSBOM.Run,
+		hasReleaseSBOM.Run,
+	}
+	SignedReleases = []ProbeImpl{
+		releasesAreSigned.Run,
+		releasesHaveProvenance.Run,
+	}
 	BranchProtection = []ProbeImpl{
 		blocksDeleteOnBranches.Run,
 		blocksForcePushOnBranches.Run,
@@ -124,8 +164,14 @@ var (
 		runsStatusChecksBeforeMerging.Run,
 		requiresPRsToChangeCode.Run,
 	}
-	PinnedDependencies = []ProbeImpl{pinsDependencies.Run}
-	TokenPermissions   = []ProbeImpl{hasNoGitHubWorkflowPermissionUnknown.Run, jobLevelPermissions.Run, topLevelPermissions.Run}
+	PinnedDependencies = []ProbeImpl{
+		pinsDependencies.Run,
+	}
+	TokenPermissions = []ProbeImpl{
+		hasNoGitHubWorkflowPermissionUnknown.Run,
+		jobLevelPermissions.Run,
+		topLevelPermissions.Run,
+	}
 	AntiCheat = []ProbeImpl{
 		llmCheatFabricatedClaims.Run,
 		llmCheatHollowImplementation.Run,
@@ -136,13 +182,20 @@ var (
 		llmCheatComplexityObfuscation.Run,
 		llmCheatOptionSpaceCollapse.Run,
 	}
+
+	// Probes which aren't included by any checks.
+	// These still need to be listed so they can be called with --probes.
 	Uncategorized = []ProbeImpl{
 		hasPermissiveLicense.Run,
 		codeReviewOneReviewers.Run,
 		hasBinaryArtifacts.Run,
 		releasesHaveVerifiedProvenance.Run,
 	}
-	Independent = []IndependentProbeImpl{unsafeblock.Run}
+
+	// Probes which don't use pre-computed raw data but rather collect it themselves.
+	Independent = []IndependentProbeImpl{
+		unsafeblock.Run,
+	}
 )
 
 //nolint:gochecknoinits
