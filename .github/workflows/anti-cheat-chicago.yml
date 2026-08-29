@@ -1,0 +1,53 @@
+name: Anti-Cheat Chicago
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "internal/llmcheat/**"
+      - "checks/raw/anti_cheat*"
+      - ".github/workflows/anti-cheat-chicago.yml"
+  push:
+    branches: [main]
+    paths:
+      - "internal/llmcheat/**"
+      - "checks/raw/anti_cheat*"
+      - ".github/workflows/anti-cheat-chicago.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  chicago:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920
+        with:
+          egress-policy: audit
+      - name: Checkout exact admitted subject
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Assert exact admitted subject
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Execute production detector registry and Chicago corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          go clean -testcache
+          go test -count=1 ./internal/llmcheat/patterns/...
+          go test -count=1 ./checks/raw -run 'TestAntiCheat'
+          go vet ./internal/llmcheat/...

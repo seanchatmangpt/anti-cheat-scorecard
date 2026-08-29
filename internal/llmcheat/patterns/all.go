@@ -56,6 +56,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/malformedemptydoclink"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/misleadingfunctionnamevsbody"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nonchicagoacceptancelaundering"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nonchicagoevidence"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/nondeterministicsourceindeterministicpath"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/overclaimingsuperlative"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/placeholderloremipsum"
