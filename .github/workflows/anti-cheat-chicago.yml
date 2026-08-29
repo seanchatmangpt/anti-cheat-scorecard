@@ -47,6 +47,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          go test ./internal/llmcheat/patterns/...
-          go test ./checks/raw -run 'TestAntiCheat'
+          go clean -testcache
+          go test -count=1 ./internal/llmcheat/patterns/...
+          go test -count=1 ./checks/raw -run 'TestAntiCheat'
           go vet ./internal/llmcheat/...
