@@ -65,7 +65,6 @@ func TestConsumerCourt(t *testing.T) {
 
 	d := newDetector()
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			matches := d.Detect("tests/chicago/acceptance_test.go", []byte(tc.src))
