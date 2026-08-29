@@ -47,6 +47,7 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/generatedfilemanualfixcomment"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/godfunctionhidesstub"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/gopanictodostub"
+	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/gosyntaxgraphchicago"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/handeditedgeneratedfilemarker"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/hedgelanguagemasking"
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns/interactiononlyassertion"
