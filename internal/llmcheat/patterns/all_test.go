@@ -15,6 +15,7 @@
 package patterns_test
 
 import (
+	"os"
 	"slices"
 	"testing"
 
@@ -22,36 +23,39 @@ import (
 	_ "github.com/ossf/scorecard/v5/internal/llmcheat/patterns"
 )
 
-func TestProductionRegistryContainsEveryLandedDetector(t *testing.T) {
-	t.Parallel()
-	required := []string{
-		"claim-verified-without-run",
-		"go-panic-todo-stub",
-		"hedge-language-masking-uncertainty",
-		"non-chicago-evidence",
-		"overclaiming-superlative",
-		"placeholder-lorem-ipsum-in-code",
-		"python-notimplemented-shipped",
-		"rust-todo-unimplemented-macro",
-		"self-contradicting-status",
-		"standing-vocabulary-misuse",
-		"typescript-throw-not-implemented",
-		"unverified-benchmark-numbers",
+func TestProductionRegistryContainsEveryDetectorDirectory(t *testing.T) {
+	entries, err := os.ReadDir(".")
+	if err != nil {
+		t.Fatal(err)
 	}
-	all := llmcheat.All()
-	got := make([]string, 0, len(all))
-	for _, p := range all {
-		got = append(got, p.ID())
-	}
-	if !slices.IsSorted(got) {
-		t.Fatalf("registry order must be deterministic, got %v", got)
-	}
-	for _, id := range required {
-		if !slices.Contains(got, id) {
-			t.Errorf("production registry missing detector %q; registered=%v", id, got)
+	expected := 0
+	for _, entry := range entries {
+		if entry.IsDir() {
+			expected++
 		}
 	}
-	if len(got) < len(required) {
-		t.Fatalf("production registry has %d detectors, need at least %d", len(got), len(required))
+
+	all := llmcheat.All()
+	if len(all) != expected {
+		t.Fatalf("production registry has %d detectors but source tree has %d detector directories", len(all), expected)
+	}
+
+	ids := make([]string, 0, len(all))
+	seen := map[string]bool{}
+	for _, p := range all {
+		if p.ID() == "" {
+			t.Fatal("production registry contains empty detector ID")
+		}
+		if seen[p.ID()] {
+			t.Fatalf("production registry contains duplicate detector ID %q", p.ID())
+		}
+		seen[p.ID()] = true
+		ids = append(ids, p.ID())
+	}
+	if !slices.IsSorted(ids) {
+		t.Fatalf("production registry order is nondeterministic: %v", ids)
+	}
+	if !seen["non-chicago-evidence"] {
+		t.Fatalf("production registry does not contain non-chicago-evidence: %v", ids)
 	}
 }
