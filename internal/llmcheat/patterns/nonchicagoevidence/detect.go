@@ -36,7 +36,7 @@ var (
 	mockRe              = regexp.MustCompile(`(?i)\b(mock(?:ed|ing)?|stub(?:bed|bing)?|fake(?:d|s|ing)?|monkeypatch|wiremock|mockall|httptest\.newserver|jest\.mock|unittest\.mock)\b`)
 	skipRe              = regexp.MustCompile(`(?i)(?:\bt\.skip(?:f|now)?\s*\(|pytest\.skip\s*\(|\b(?:it|test|describe)\.skip\s*\(|#\s*\[\s*ignore\s*\]|@\s*(?:disabled|ignore)\b)`)
 	failureMaskRe       = regexp.MustCompile(`(?im)^\s*(?:continue-on-error\s*:\s*true|allow_failure\s*:\s*true)\s*$|(?m)\|\|\s*true(?:\s*(?:#.*)?)$`)
-	mutableUseRe        = regexp.MustCompile(`(?im)^\s*uses\s*:\s*[^@\s]+@(main|master|latest|v\d+(?:\.\d+){0,2})\s*(?:#.*)?$`)
+	mutableUseRe        = regexp.MustCompile(`(?im)^\s*(?:-\s*)?uses\s*:\s*[^@\s]+@(main|master|latest|v\d+(?:\.\d+){0,2})\s*(?:#.*)?$`)
 	mutableRefRe        = regexp.MustCompile(`(?im)^\s*ref\s*:\s*(?:main|master|head|latest)\s*(?:#.*)?$`)
 	dryRunRe            = regexp.MustCompile(`(?i)(?:--dry-run\b|\bdry[_ -]?run\b)`)
 	aliveRe             = regexp.MustCompile(`(?i)(?:\bstanding\b[^\n]{0,24}\bALIVE\b|\bALIVE(?:\[[^\]]+\])?\b)`)
