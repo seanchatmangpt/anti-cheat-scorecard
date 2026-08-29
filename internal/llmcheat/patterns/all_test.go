@@ -23,13 +23,14 @@ import (
 
 func TestProductionAggregatorRegistersChicagoAndLandedFleet(t *testing.T) {
 	all := llmcheat.All()
-	if len(all) < 27 {
-		t.Fatalf("production aggregator registered %d patterns, want at least 27 landed detectors", len(all))
+	if len(all) < 28 {
+		t.Fatalf("production aggregator registered %d patterns, want at least 28 landed detectors", len(all))
 	}
 
 	want := map[string]bool{
 		"claim-verified-without-run":             false,
 		"non-chicago-acceptance-laundering":      false,
+		"non-chicago-evidence":                   false,
 		"hand-edited-generated-file-marker":      false,
 		"interaction-only-assertion":             false,
 		"unverified-benchmark-numbers":           false,
