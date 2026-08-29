@@ -22,13 +22,35 @@ import (
 	"github.com/ossf/scorecard/v5/internal/llmcheat"
 )
 
-const patternID = "terminal-failure-without-reserve"
-const category = "option-space-collapse"
+const (
+	patternID = "terminal-failure-without-reserve"
+	category  = "option-space-collapse"
+)
 
-var terminalRe = regexp.MustCompile(`(?i)\b(stop on first failure|if [^\n.]*fails?[,;:]?\s*(?:stop|abort|exit)|on failure[: ]+(?:stop|abort|exit)|stopping because|cannot continue|no further work|failure_action\s*[:=]\s*(?:stop|abort|exit))\b`)
-var reserveRe = regexp.MustCompile(`(?i)\b(reserve|fallback|alternative|continue with|next route|next lawful route|retry|repair|root cause|\bRCA\b|requeue|promote [^\n]*reserve|other work|parallel lane|remaining queue)\b`)
-var typedBoundaryRe = regexp.MustCompile(`(?i)\b(?:BLOCKED|REFUSED|UNSUPPORTED)\[[A-Z0-9_:\-]+\]|\b(authority|transport|capability) boundary\b`)
-var normativeRe = regexp.MustCompile(`(?i)\b(detects?|detector|anti[- ]pattern|example|must not|do not|don't|forbid|reject)\b`)
+var (
+	terminalRe = regexp.MustCompile(
+		`(?i)\b(` +
+			`stop on first failure|if [^\n.]*fails?[,;:]?\s*(?:stop|abort|exit)|` +
+			`on failure[: ]+(?:stop|abort|exit)|stopping because|cannot continue|no further work|` +
+			`failure_action\s*[:=]\s*(?:stop|abort|exit)` +
+			`)\b`,
+	)
+	reserveRe = regexp.MustCompile(
+		`(?i)\b(` +
+			`reserve|fallback|alternative|continue with|next route|next lawful route|retry|repair|` +
+			`root cause|RCA|requeue|promote [^\n]*reserve|other work|parallel lane|remaining queue` +
+			`)\b`,
+	)
+	typedBoundaryRe = regexp.MustCompile(
+		`(?i)(` +
+			`\b(?:BLOCKED|REFUSED|UNSUPPORTED)\[[A-Z0-9_:\-]+\]|` +
+			`\b(?:authority|transport|capability) boundary\b` +
+			`)`,
+	)
+	normativeRe = regexp.MustCompile(
+		`(?i)\b(detects?|detector|anti[- ]pattern|example|must not|do not|don't|forbid|reject)\b`,
+	)
+)
 
 var evidenceExtensions = map[string]bool{
 	".md": true, ".txt": true, ".log": true, ".json": true,
@@ -59,9 +81,12 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 			PatternID: patternID,
 			Category:  category,
 			Path:      path,
-			Line:      uint(i + 1), //nolint:gosec // bounded repository-text index
-			Message: fmt.Sprintf("terminal failure statement %q names neither a reserve route nor a typed authority/transport/capability boundary", strings.TrimSpace(line)),
-			Severity:  llmcheat.SeverityHigh,
+			Line:      uint(i + 1),
+			Message: fmt.Sprintf(
+				"terminal failure statement %q names neither a reserve route nor a typed boundary",
+				strings.TrimSpace(line),
+			),
+			Severity: llmcheat.SeverityHigh,
 		})
 	}
 	return matches
@@ -79,4 +104,5 @@ func joinWindow(lines []string, center, radius int) string {
 	return strings.Join(lines[start:end+1], "\n")
 }
 
+//nolint:gochecknoinits // package registration is the production plugin contract.
 func init() { llmcheat.Register(newDetector()) }
