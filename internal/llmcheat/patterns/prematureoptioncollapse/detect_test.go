@@ -11,7 +11,9 @@ package prematureoptioncollapse
 import "testing"
 
 func TestDetectFlagsSingleOptionWithoutExploration(t *testing.T) {
-	got := newDetector().Detect("PLAN.md", []byte("Selected approach: rewrite the generator. This is the only viable option.\n"))
+	t.Parallel()
+	content := []byte("Selected approach: rewrite the generator. This is the only viable option.\n")
+	got := newDetector().Detect("PLAN.md", content)
 	if len(got) != 1 {
 		t.Fatalf("got %d matches, want 1: %+v", len(got), got)
 	}
@@ -21,20 +23,32 @@ func TestDetectFlagsSingleOptionWithoutExploration(t *testing.T) {
 }
 
 func TestDetectAcceptsSelectionAfterAlternativeCensus(t *testing.T) {
-	content := []byte("Options: preserve current generator, patch the pack, or rewrite.\nComparison: patching preserves the most reversible options.\nSelected approach: patch the pack.\nFallback: preserve the current generator and revert this patch.\n")
+	t.Parallel()
+	content := []byte(
+		"Options: preserve current generator, patch the pack, or rewrite.\n" +
+			"Comparison: patching preserves the most reversible options.\n" +
+			"Selected approach: patch the pack.\n" +
+			"Fallback: preserve the current generator and revert this patch.\n",
+	)
 	if got := newDetector().Detect("PLAN.md", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match", got)
 	}
 }
 
 func TestDetectAcceptsNearbyFalsifierAndReserve(t *testing.T) {
-	content := []byte("Falsifier: reject the route if replay diverges.\nReserve: switch to the prior pack.\nWe chose the generated path.\n")
+	t.Parallel()
+	content := []byte(
+		"Falsifier: reject the route if replay diverges.\n" +
+			"Reserve: switch to the prior pack.\n" +
+			"We chose the generated path.\n",
+	)
 	if got := newDetector().Detect("receipt.txt", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match", got)
 	}
 }
 
 func TestDetectSkipsNormativeRuleText(t *testing.T) {
+	t.Parallel()
 	content := []byte("Rule: detect the phrase only viable option when no alternatives are recorded.\n")
 	if got := newDetector().Detect("RULES.md", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match for detector definition", got)
@@ -42,6 +56,7 @@ func TestDetectSkipsNormativeRuleText(t *testing.T) {
 }
 
 func TestDetectSkipsSourceCode(t *testing.T) {
+	t.Parallel()
 	content := []byte("const msg = \"the solution is deterministic\"\n")
 	if got := newDetector().Detect("main.go", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match outside evidence-bearing paths", got)
