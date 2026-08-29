@@ -7,12 +7,14 @@ on:
       - "internal/llmcheat/**"
       - "checks/raw/anti_cheat*"
       - ".github/workflows/anti-cheat-chicago.yml"
+      - ".github/workflows/gitlab.yml"
   push:
     branches: [main]
     paths:
       - "internal/llmcheat/**"
       - "checks/raw/anti_cheat*"
       - ".github/workflows/anti-cheat-chicago.yml"
+      - ".github/workflows/gitlab.yml"
 
 permissions:
   contents: read
