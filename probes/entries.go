@@ -71,6 +71,7 @@ import (
 	"github.com/ossf/scorecard/v5/probes/llmCheatFabricatedClaims"
 	"github.com/ossf/scorecard/v5/probes/llmCheatGeneratedArtifactTampering"
 	"github.com/ossf/scorecard/v5/probes/llmCheatHollowImplementation"
+	"github.com/ossf/scorecard/v5/probes/llmCheatOptionSpaceCollapse"
 	"github.com/ossf/scorecard/v5/probes/llmCheatSemanticWebIntegrity"
 	"github.com/ossf/scorecard/v5/probes/llmCheatTestIntegrityViolation"
 )
@@ -179,6 +180,7 @@ var (
 		llmCheatSemanticWebIntegrity.Run,
 		llmCheatDeterminismViolation.Run,
 		llmCheatComplexityObfuscation.Run,
+		llmCheatOptionSpaceCollapse.Run,
 	}
 
 	// Probes which aren't included by any checks.
