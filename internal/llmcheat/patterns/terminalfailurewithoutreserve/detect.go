@@ -64,17 +64,45 @@ func (d *detector) ID() string       { return patternID }
 func (d *detector) Category() string { return category }
 
 func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
-	if len(content) == 0 || !evidenceExtensions[strings.ToLower(filepath.Ext(path))] { return nil }
+	if len(content) == 0 || !evidenceExtensions[strings.ToLower(filepath.Ext(path))] {
+		return nil
+	}
 	lines := strings.Split(string(content), "\n")
 	var matches []llmcheat.Match
 	for i, line := range lines {
-		if !terminalRe.MatchString(line) || normativeRe.MatchString(line) { continue }
+		if !terminalRe.MatchString(line) || normativeRe.MatchString(line) {
+			continue
+		}
 		window := joinWindow(lines, i, 5)
-		if reserveRe.MatchString(window) || typedBoundaryRe.MatchString(window) { continue }
-		matches = append(matches, llmcheat.Match{PatternID: patternID, Category: category, Path: path, Line: uint(i + 1), Message: fmt.Sprintf("terminal failure statement %q names neither a reserve route nor a typed boundary", strings.TrimSpace(line)), Severity: llmcheat.SeverityHigh})
+		if reserveRe.MatchString(window) || typedBoundaryRe.MatchString(window) {
+			continue
+		}
+		matches = append(matches, llmcheat.Match{
+			PatternID: patternID,
+			Category:  category,
+			Path:      path,
+			Line:      uint(i + 1),
+			Message: fmt.Sprintf(
+				"terminal failure statement %q names neither a reserve route nor a typed boundary",
+				strings.TrimSpace(line),
+			),
+			Severity: llmcheat.SeverityHigh,
+		})
 	}
 	return matches
 }
-func joinWindow(lines []string, center, radius int) string { start := center-radius; if start<0 { start=0 }; end:=center+radius; if end>=len(lines){end=len(lines)-1}; return strings.Join(lines[start:end+1], "\n") }
+
+func joinWindow(lines []string, center, radius int) string {
+	start := center - radius
+	if start < 0 {
+		start = 0
+	}
+	end := center + radius
+	if end >= len(lines) {
+		end = len(lines) - 1
+	}
+	return strings.Join(lines[start:end+1], "\n")
+}
+
 //nolint:gochecknoinits // package registration is the production plugin contract.
 func init() { llmcheat.Register(newDetector()) }
