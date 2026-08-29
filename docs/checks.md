@@ -7,6 +7,34 @@ remediation steps to improve the score, and an explanation of the risks
 associated with a low score. The checks are continually changing and we welcome
 community feedback. If you have ideas for additions or new detection techniques,
 please [contribute](../CONTRIBUTING.md)!
+## Anti-Cheat 
+
+Risk: `Medium` (misleading status claims and unfinished code presented as done)
+
+This check is specific to this fork of Scorecard (`seanchatmangpt/anti-cheat-scorecard`)
+and is not part of upstream `ossf/scorecard`. Where every other check in this document
+asks "is this repository's supply chain secured," this one asks a different question:
+"does this repository's own code and history contain a fabricated, hollow, or
+unfalsifiable claim of correctness."
+
+It runs 50+ independent pattern detectors (`internal/llmcheat/patterns/`) against
+every non-vendored, non-generated text file in the repository, grouped into 7
+categories: fabricated status/benchmark/citation claims with no adjacent evidence;
+hollow or placeholder implementations across Go/Python/Rust/TypeScript; test-integrity
+violations (mocking an owned collaborator, tautological or interaction-only
+assertions, always-true oracles); hand-edited generated artifacts and tampered
+lockfiles; unverifiable or vacuous RDF/SPARQL/SHACL claims; nondeterminism and
+broken provenance in paths documented as deterministic; and complexity used to
+obscure a stub or omission.
+
+This check will only find what it has a pattern for — a clean result means "no
+known cheat pattern was found," not "this code is correct." It complements, and
+does not replace, the supply-chain checks above.
+ 
+
+**Remediation steps**
+- Open each reported file/line and either supply the missing evidence (a receipt, a real test run, a real implementation) or remove the unbacked claim/stub/tampering so the code's real state matches what it says about itself.
+
 ## Binary-Artifacts 
 
 Risk: `High` (non-reviewable code)

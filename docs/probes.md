@@ -382,6 +382,104 @@ If collaborators, members or owners have NOT participated in issues in the last 
 The probe returns 1 true outcome if the project has no workflows "write" permissions a the "job" level.
 
 
+## llmCheatComplexityObfuscation
+
+**Lifecycle**: experimental
+
+**Description**: Complexity and surface area used to obscure a stub or omission
+
+**Motivation**: Wildcard imports, misleadingly-named no-op functions, and near-duplicate copy-pasted logic all make it harder to see, at a glance, that a given piece of code does less than its name or its surrounding structure implies.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "complexity-and-surface-obfuscation" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
+## llmCheatDeterminismViolation
+
+**Lifecycle**: experimental
+
+**Description**: Nondeterminism and broken provenance in claimed-deterministic paths
+
+**Motivation**: A path documented or relied upon as deterministic/reproducible that actually depends on wall-clock time, unseeded randomness, or a floating dependency version silently breaks the guarantee its own documentation promises.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "determinism-and-provenance-violation" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
+## llmCheatFabricatedClaims
+
+**Lifecycle**: experimental
+
+**Description**: Fabricated or unverifiable status claims
+
+**Motivation**: Status words like ALIVE, done, verified, or 100%% carry real weight only when a receipt, test run, or benchmark backs them. An unbacked claim is indistinguishable from a hallucinated one until someone re-does the work the claim already asserted was done.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "fabricated-claims" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
+## llmCheatGeneratedArtifactTampering
+
+**Lifecycle**: experimental
+
+**Description**: Hand-edited generated artifacts
+
+**Motivation**: Files a project declares generated (a DO NOT EDIT banner, a lockfile, a rendered template) are supposed to be reproducible from their real source of truth. A hand-edit to the output without a matching change to the source silently breaks that reproducibility guarantee.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "generated-artifact-tampering" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
+## llmCheatHollowImplementation
+
+**Lifecycle**: experimental
+
+**Description**: Hollow, stub, or placeholder implementations
+
+**Motivation**: A function that type-checks and compiles but never does real work (an empty body, an unconditional todo!()/NotImplementedError, a lorem-ipsum placeholder) is a common shape of code that looks finished but is not.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "hollow-implementation" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
+## llmCheatSemanticWebIntegrity
+
+**Lifecycle**: experimental
+
+**Description**: Unverifiable or vacuous RDF/SPARQL/SHACL claims
+
+**Motivation**: Turtle files, SPARQL queries, and SHACL shapes can assert status, define admission gates, or select data just as code can — and can just as easily assert something unbacked, admit everything unconditionally, or select fields nothing downstream consumes.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "semantic-web-integrity" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
+## llmCheatTestIntegrityViolation
+
+**Lifecycle**: experimental
+
+**Description**: Tests that cannot actually fail
+
+**Motivation**: A test suite exists to falsify broken code. Interaction-only mocking of an owned collaborator, tautological assertions, and always-true oracles all produce a green test run that proves nothing about the code under test.
+
+**Implementation**: The implementation runs every registered internal/llmcheat pattern detector in the "test-integrity-violation" category against every non-vendored, non-generated text file in the repository, then reports one finding per match found.
+
+**Outcomes**: If one or more patterns in this category are found, the probe returns one OutcomeFalse finding per match, each naming the specific pattern ID, file, and line.
+If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
+
+
 ## packagedWithAutomatedWorkflow
 
 **Lifecycle**: stable
