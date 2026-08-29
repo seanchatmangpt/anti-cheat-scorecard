@@ -75,33 +75,71 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 		case "call":
 			callee := strings.ToLower(n.Value)
 			switch {
-			case strings.HasSuffix(callee, ".skip"), strings.HasSuffix(callee, ".skipf"), strings.HasSuffix(callee, ".skipnow"):
-				add("skipped-acceptance", n, "contains an executable test-skip call; a skipped acceptance path cannot establish Chicago standing")
+			case isSkipCall(callee):
+				add(
+					"skipped-acceptance",
+					n,
+					"contains an executable test-skip call; a skipped acceptance path cannot establish Chicago standing",
+				)
 			case callee == "httptest.newserver" || callee == "httptest.newtlsserver":
-				add("synthetic-http-server", n, "uses httptest server substitution in an acceptance surface instead of the admitted production dependency")
+				add(
+					"synthetic-http-server",
+					n,
+					"uses httptest server substitution instead of the admitted production dependency",
+				)
 			case callee == "panic" && hasPlaceholderLiteral(g.Descendants(n.ID)):
 				add("placeholder-panic", n, "contains an executable placeholder panic in an acceptance path")
-			case (strings.HasSuffix(callee, ".true") || strings.HasSuffix(callee, ".truef")) && hasBooleanIdentifier(g.Descendants(n.ID), "true"):
-				add("tautological-assertion", n, "asserts the literal true rather than an observed system consequence")
+			case isTrueAssertion(callee, g.Descendants(n.ID)):
+				add("tautological-assertion", n, "asserts literal true rather than an observed system consequence")
 			}
 		case "if-condition":
 			condition := strings.TrimSpace(strings.ToLower(n.Value))
 			if condition == "true" || condition == "false" {
-				add("constant-control-branch", n, "uses a constant Boolean branch in acceptance control flow, predeclaring a path rather than observing it")
+				add(
+					"constant-control-branch",
+					n,
+					"uses a constant Boolean branch, predeclaring a path rather than observing it",
+				)
 			}
 		case "composite":
 			desc := g.Descendants(n.ID)
 			if booleanCount(desc) >= 3 && hasStandingLiteral(desc) {
-				add("boolean-standing-court", n, "encodes standing alongside three or more Boolean facts inside one composite literal; declarative model state is not execution evidence")
+				add(
+					"boolean-standing-court",
+					n,
+					"combines standing with three or more Boolean facts; declarative model state is not execution evidence",
+				)
 			}
 		}
 	}
 	return matches
 }
 
+func isSkipCall(callee string) bool {
+	return strings.HasSuffix(callee, ".skip") ||
+		strings.HasSuffix(callee, ".skipf") ||
+		strings.HasSuffix(callee, ".skipnow")
+}
+
+func isTrueAssertion(callee string, descendants []syntaxgraph.Node) bool {
+	return (strings.HasSuffix(callee, ".true") || strings.HasSuffix(callee, ".truef")) &&
+		hasBooleanIdentifier(descendants, "true")
+}
+
 func isAcceptancePath(path string) bool {
 	p := strings.ToLower(filepath.ToSlash(path))
-	for _, marker := range []string{"chicago", "acceptance", "qualification", "consumer", "journey", "e2e", "end_to_end", "end-to-end", "court"} {
+	markers := []string{
+		"chicago",
+		"acceptance",
+		"qualification",
+		"consumer",
+		"journey",
+		"e2e",
+		"end_to_end",
+		"end-to-end",
+		"court",
+	}
+	for _, marker := range markers {
 		if strings.Contains(p, marker) {
 			return true
 		}
@@ -164,4 +202,8 @@ func hasStandingLiteral(nodes []syntaxgraph.Node) bool {
 	return false
 }
 
-func init() { llmcheat.Register(newDetector()) }
+// Registration through init is the package contract used by every detector
+// aggregated by internal/llmcheat/patterns/all.go.
+func init() { //nolint:gochecknoinits
+	llmcheat.Register(newDetector())
+}
