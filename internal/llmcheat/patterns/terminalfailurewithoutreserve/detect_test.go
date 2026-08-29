@@ -11,6 +11,7 @@ package terminalfailurewithoutreserve
 import "testing"
 
 func TestDetectFlagsStopOnFirstFailure(t *testing.T) {
+	t.Parallel()
 	got := newDetector().Detect("RUNBOOK.md", []byte("Stop on first failure.\n"))
 	if len(got) != 1 {
 		t.Fatalf("got %d matches, want 1: %+v", len(got), got)
@@ -18,6 +19,7 @@ func TestDetectFlagsStopOnFirstFailure(t *testing.T) {
 }
 
 func TestDetectFlagsCannotContinueWithoutBoundary(t *testing.T) {
+	t.Parallel()
 	got := newDetector().Detect("receipt.txt", []byte("The build failed; cannot continue.\n"))
 	if len(got) != 1 {
 		t.Fatalf("got %d matches, want 1: %+v", len(got), got)
@@ -25,13 +27,18 @@ func TestDetectFlagsCannotContinueWithoutBoundary(t *testing.T) {
 }
 
 func TestDetectAcceptsReservePromotion(t *testing.T) {
-	content := []byte("If the build fails, stop this lane.\nReserve: continue with the documentation and replay lane.\n")
+	t.Parallel()
+	content := []byte(
+		"If the build fails, stop this lane.\n" +
+			"Reserve: continue with the documentation and replay lane.\n",
+	)
 	if got := newDetector().Detect("PLAN.md", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match", got)
 	}
 }
 
 func TestDetectAcceptsTypedTransportBoundary(t *testing.T) {
+	t.Parallel()
 	content := []byte("Cannot continue on this transport.\nBLOCKED[DNS_GITHUB_UNRESOLVED]\n")
 	if got := newDetector().Detect("receipt.txt", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match", got)
@@ -39,7 +46,11 @@ func TestDetectAcceptsTypedTransportBoundary(t *testing.T) {
 }
 
 func TestDetectAcceptsRCARepairRoute(t *testing.T) {
-	content := []byte("On failure: stop the destructive step.\nRCA: classify the exact transition, repair, then requeue.\n")
+	t.Parallel()
+	content := []byte(
+		"On failure: stop the destructive step.\n" +
+			"RCA: classify the exact transition, repair, then requeue.\n",
+	)
 	if got := newDetector().Detect("RUNBOOK.md", content); len(got) != 0 {
 		t.Fatalf("got %+v, want no match", got)
 	}
