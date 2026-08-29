@@ -28,12 +28,30 @@ import (
 	"github.com/ossf/scorecard/v5/internal/llmcheat"
 )
 
-const patternID = "premature-option-collapse"
-const category = "option-space-collapse"
+const (
+	patternID = "premature-option-collapse"
+	category  = "option-space-collapse"
+)
 
-var commitmentRe = regexp.MustCompile(`(?i)\b(only (?:viable |reasonable |safe )?option|no (?:other )?alternative|must use|must choose|chosen approach|selected approach|we chose|we selected|the solution is)\b`)
-var explorationRe = regexp.MustCompile(`(?i)(\b(alternatives?|candidates?|census|inventory|compare|comparison|trade[- ]?offs?|reserve|fallback|rollback|reversible|contingency|falsifier|next lawful route)\b|\boptions?\s*:)`)
-var normativeRe = regexp.MustCompile(`(?i)\b(detects?|detector|rule|anti[- ]pattern|counterexample|example|must not|should flag|rejects?|forbids?)\b`)
+var (
+	commitmentRe = regexp.MustCompile(
+		`(?i)\b(` +
+			`only (?:viable |reasonable |safe )?option|no (?:other )?alternative|` +
+			`must use|must choose|chosen approach|selected approach|we chose|we selected|the solution is` +
+			`)\b`,
+	)
+	explorationRe = regexp.MustCompile(
+		`(?i)(` +
+			`\b(alternatives?|candidates?|census|inventory|compare|comparison|trade[- ]?offs?|` +
+			`reserve|fallback|rollback|reversible|contingency|falsifier|next lawful route)\b|` +
+			`\boptions?\s*:` +
+			`)`,
+	)
+	normativeRe = regexp.MustCompile(
+		`(?i)\b(detects?|detector|rule|anti[- ]pattern|counterexample|example|` +
+			`must not|should flag|rejects?|forbids?)\b`,
+	)
+)
 
 var evidenceExtensions = map[string]bool{
 	".md": true, ".txt": true, ".log": true, ".json": true,
@@ -64,7 +82,7 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 			PatternID: patternID,
 			Category:  category,
 			Path:      path,
-			Line:      uint(i + 1), //nolint:gosec // bounded repository-text index
+			Line:      uint(i + 1),
 			Message: fmt.Sprintf(
 				"%q collapses the option space without a nearby census/comparison/falsifier/reserve or reversible route",
 				strings.TrimSpace(line),
@@ -87,4 +105,5 @@ func joinWindow(lines []string, center, radius int) string {
 	return strings.Join(lines[start:end+1], "\n")
 }
 
+//nolint:gochecknoinits // package registration is the production plugin contract.
 func init() { llmcheat.Register(newDetector()) }
