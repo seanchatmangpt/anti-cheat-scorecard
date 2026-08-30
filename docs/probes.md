@@ -209,7 +209,7 @@ If no dangerous patterns are found, the probe returns one finding with OutcomeFa
 **Implementation**: The probe iterates through the workflows looking for pull_request_target and workflow_run triggers which checkout references from a PR. This check does not detect whether untrusted code checkouts are used safely, for example, only on pull request that have been assigned a label.
 
 **Outcomes**: The probe returns one finding with OutcomeTrue per untrusted checkout.
-The probe returns one finding with OutcomeFalse if no dangerous patterns are detected.
+The probe returns one finding with OutcomeFalse if no untrusted checkouts are detected.
 
 
 ## hasFSFOrOSIApprovedLicense
@@ -452,20 +452,6 @@ If no patterns in this category are found anywhere in the repository, the probe 
 If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
 
 
-## llmCheatOptionSpaceCollapse
-
-**Lifecycle**: experimental
-
-**Description**: Premature collapse of reversible lawful options
-
-**Motivation**: DfCM work must preserve viable alternatives until evidence justifies a selection. Premature commitment, missing reserve routes, and irreversible action without rollback shrink the lawful option space before comparison is complete and can turn one failed path into a false terminal state.
-
-**Implementation**: The implementation filters the shared Anti-Cheat result for the "option-space-collapse" category and returns one finding for each matched DfCM violation across non-vendored source, workflow, and documentation surfaces.
-
-**Outcomes**: If one or more option-space-collapse patterns are found, the probe returns one OutcomeFalse finding per match, naming the pattern ID, file, and line.
-If no option-space-collapse patterns are found, the probe returns a single OutcomeTrue finding.
-
-
 ## llmCheatSemanticWebIntegrity
 
 **Lifecycle**: experimental
@@ -656,7 +642,7 @@ If we didn't find a package or didn't find releases, return OutcomeNotAvailable.
 **Implementation**: The implementation checks for evidence of various SAST tools. This includes configuration files, GitHub Action workflows, and GitHub PR check annotations.
 
 **Outcomes**: If the project uses a SAST tool we can detect, the probe returns one finding per tool with OutcomeTrue.
-If the project does not use a SAST tool, or uses a tool we dont currently detect, one finding with OutcomeFalse is returned.
+If the project does not use a SAST tool, or uses a tool we dont currently detect, the probe returns one finding with OutcomeFalse.
 
 
 ## sastToolRunsOnAllCommits
