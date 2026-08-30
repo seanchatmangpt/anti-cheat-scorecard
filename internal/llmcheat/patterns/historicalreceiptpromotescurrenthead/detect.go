@@ -23,9 +23,15 @@ const (
 )
 
 var (
-	historicalRe = regexp.MustCompile(`(?i)\b(previous|prior|historical|old)\b.{0,40}\breceipt\b|\breceipt\b.{0,40}\b(previous|prior|historical|old)\b`)
-	promotionRe  = regexp.MustCompile(`(?i)\b(current|latest|new)\b.{0,30}\b(head|commit|sha|subject)\b|\bALIVE\b`)
-	freshRe      = regexp.MustCompile(`(?i)\b(fresh|new)\b.{0,20}\breceipt\b|\b(re-?run|re-?execute|fresh evidence|recertif)\w*\b`)
+	historicalRe = regexp.MustCompile(
+		`(?i)\b(previous|prior|historical|old)\b.{0,40}\breceipt\b|` +
+			`\breceipt\b.{0,40}\b(previous|prior|historical|old)\b`,
+	)
+	promotionRe = regexp.MustCompile(`(?i)\b(current|latest|new)\b.{0,30}\b(head|commit|sha|subject)\b|\bALIVE\b`)
+	freshRe = regexp.MustCompile(
+		`(?i)\b(fresh|new)\b.{0,20}\breceipt\b|` +
+			`\b(re-?run|re-?execute|fresh evidence|recertif)\w*\b`,
+	)
 )
 
 type detector struct{}
@@ -40,7 +46,8 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	}
 	line := uint(1 + strings.Count(text[:loc[0]], "\n"))
 	return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: line,
-		Message:  "historical receipt is being used to promote current/new standing without fresh execution evidence; load-bearing drift requires a new receipt",
+		Message: "historical receipt is being used to promote current/new standing without fresh execution evidence; " +
+			"load-bearing drift requires a new receipt",
 		Severity: llmcheat.SeverityHigh}}
 }
 

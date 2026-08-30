@@ -36,6 +36,7 @@ type detector struct{}
 
 func (d *detector) ID() string       { return patternID }
 func (d *detector) Category() string { return category }
+
 func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	if len(content) == 0 || !extensions[strings.ToLower(filepath.Ext(path))] {
 		return nil
@@ -53,7 +54,8 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	}
 	line := uint(1 + strings.Count(text[:subject[0]], "\n"))
 	return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: line,
-		Message:  "receipt subject SHA does not equal the head/commit SHA it claims to certify; standing cannot cross an identity mismatch",
+		Message: "receipt subject SHA does not equal the head/commit SHA it claims to certify; " +
+			"standing cannot cross an identity mismatch",
 		Severity: llmcheat.SeverityHigh}}
 }
 

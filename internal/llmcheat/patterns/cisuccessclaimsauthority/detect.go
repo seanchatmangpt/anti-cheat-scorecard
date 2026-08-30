@@ -36,9 +36,11 @@ func (d *detector) Category() string { return category }
 func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	lines := strings.Split(strings.ReplaceAll(string(content), "\r\n", "\n"), "\n")
 	for i, line := range lines {
-		if ciRe.MatchString(line) && passRe.MatchString(line) && inferenceRe.MatchString(line) && standingRe.MatchString(line) {
+		if ciRe.MatchString(line) && passRe.MatchString(line) &&
+			inferenceRe.MatchString(line) && standingRe.MatchString(line) {
 			return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: uint(i + 1),
-				Message:  "CI success is used as standing/certification authority; CI may transport evidence but cannot manufacture authority or ALIVE standing by itself",
+				Message: "CI success is used as standing/certification authority; CI may transport evidence " +
+					"but cannot manufacture authority or ALIVE standing by itself",
 				Severity: llmcheat.SeverityHigh}}
 		}
 	}

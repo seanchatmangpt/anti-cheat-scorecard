@@ -32,9 +32,12 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	lines := strings.Split(strings.ReplaceAll(string(content), "\r\n", "\n"), "\n")
 	for i, line := range lines {
 		upper := strings.ToUpper(line)
-		if strings.Contains(upper, "SELECT") && strings.Contains(upper, "CONSTRUCT") && strings.Contains(upper, "DO") && collapseRe.MatchString(line) {
+		if strings.Contains(upper, "SELECT") &&
+			strings.Contains(upper, "CONSTRUCT") &&
+			strings.Contains(upper, "DO") && collapseRe.MatchString(line) {
 			return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: uint(i + 1),
-				Message:  "SELECT, CONSTRUCT, and DO are explicitly collapsed into one authority surface; preserve selection, construction, and receipted actuation as distinct stages",
+				Message: "SELECT, CONSTRUCT, and DO are explicitly collapsed into one authority surface; " +
+					"preserve selection, construction, and receipted actuation as distinct stages",
 				Severity: llmcheat.SeverityHigh}}
 		}
 	}

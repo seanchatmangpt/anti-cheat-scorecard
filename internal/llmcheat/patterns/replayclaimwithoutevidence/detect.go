@@ -24,7 +24,10 @@ const (
 
 var (
 	replayClaimRe = regexp.MustCompile(`(?i)\breplay\b.{0,30}\b(verified|passed|successful|complete|reproducible)\b`)
-	evidenceRe    = regexp.MustCompile(`(?i)\b(command|receipt|digest|sha256|blake3|commit sha|subject sha|artifact|log|run id)\b|[0-9a-f]{40}`)
+	evidenceRe = regexp.MustCompile(
+		`(?i)\b(command|receipt|digest|sha256|blake3|commit sha|subject sha|` +
+			`artifact|log|run id)\b|[0-9a-f]{40}`,
+	)
 )
 
 type detector struct{}
@@ -39,7 +42,8 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	}
 	line := uint(1 + strings.Count(text[:loc[0]], "\n"))
 	return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: line,
-		Message:  "replay is claimed verified without a command, receipt, digest, immutable subject SHA, artifact, log, or run identity; a named replay is not verified replay evidence",
+		Message: "replay is claimed verified without a command, receipt, digest, immutable subject SHA, " +
+			"artifact, log, or run identity; a named replay is not verified replay evidence",
 		Severity: llmcheat.SeverityMedium}}
 }
 

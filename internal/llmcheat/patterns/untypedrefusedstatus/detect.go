@@ -40,7 +40,8 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	}
 	line := uint(1 + strings.Count(text[:loc[0]], "\n"))
 	return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: line,
-		Message:  "REFUSED standing is untyped; preserve the refusal boundary as REFUSED[REASON_CODE] so the failed edge remains machine-auditable topology",
+		Message: "REFUSED standing is untyped; preserve the refusal boundary as REFUSED[REASON_CODE] " +
+			"so the failed edge remains machine-auditable topology",
 		Severity: llmcheat.SeverityMedium}}
 }
 

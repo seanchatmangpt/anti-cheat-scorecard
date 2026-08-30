@@ -25,9 +25,13 @@ const (
 )
 
 var (
-	exactClaimRe  = regexp.MustCompile(`(?i)\b(exact[- ]head|exact sha|exact subject|admitted subject|exact commit)\b`)
-	floatingRefRe = regexp.MustCompile(`(?im)(?:\bref\s*:\s*(?:main|master)\b|\bbranch\s*[:=]\s*["']?(?:main|master)\b|@(?:main|master)\b|checkout\s+(?:main|master)\b)`)
-	fullSHARe     = regexp.MustCompile(`(?i)\b[0-9a-f]{40}\b`)
+	exactClaimRe = regexp.MustCompile(`(?i)\b(exact[- ]head|exact sha|exact subject|admitted subject|exact commit)\b`)
+	floatingRefRe = regexp.MustCompile(
+		`(?im)(?:\bref\s*:\s*(?:main|master)\b|` +
+			`\bbranch\s*[:=]\s*["']?(?:main|master)\b|` +
+			`@(?:main|master)\b|checkout\s+(?:main|master)\b)`,
+	)
+	fullSHARe = regexp.MustCompile(`(?i)\b[0-9a-f]{40}\b`)
 )
 
 var extensions = map[string]bool{
@@ -53,7 +57,8 @@ func (d *detector) Detect(path string, content []byte) []llmcheat.Match {
 	}
 	line := uint(1 + strings.Count(text[:loc[0]], "\n"))
 	return []llmcheat.Match{{PatternID: patternID, Category: category, Path: path, Line: line,
-		Message:  "artifact claims exact-subject evidence while selecting a floating main/master ref; bind the admitted subject to an immutable 40-hex commit SHA",
+		Message: "artifact claims exact-subject evidence while selecting a floating main/master ref; " +
+			"bind the admitted subject to an immutable 40-hex commit SHA",
 		Severity: llmcheat.SeverityHigh}}
 }
 
