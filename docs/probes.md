@@ -209,7 +209,7 @@ If no dangerous patterns are found, the probe returns one finding with OutcomeFa
 **Implementation**: The probe iterates through the workflows looking for pull_request_target and workflow_run triggers which checkout references from a PR. This check does not detect whether untrusted code checkouts are used safely, for example, only on pull request that have been assigned a label.
 
 **Outcomes**: The probe returns one finding with OutcomeTrue per untrusted checkout.
-The probe returns one finding with OutcomeFalse if no untrusted checkouts are detected.
+The probe returns one finding with OutcomeFalse if no dangerous patterns are detected.
 
 
 ## hasFSFOrOSIApprovedLicense
@@ -656,7 +656,7 @@ If we didn't find a package or didn't find releases, return OutcomeNotAvailable.
 **Implementation**: The implementation checks for evidence of various SAST tools. This includes configuration files, GitHub Action workflows, and GitHub PR check annotations.
 
 **Outcomes**: If the project uses a SAST tool we can detect, the probe returns one finding per tool with OutcomeTrue.
-If the project does not use a SAST tool, or uses a tool we dont currently detect, the probe returns one finding with OutcomeFalse.
+If the project does not use a SAST tool, or uses a tool we dont currently detect, one finding with OutcomeFalse is returned.
 
 
 ## sastToolRunsOnAllCommits
@@ -685,7 +685,7 @@ If the project does not run any SAST tools successfully on every pull request be
 **Implementation**: The implementation looks for strings "http(s)://" to find URLs; and for strings "...@..." for email addresses.
 
 **Outcomes**: If links are found, one finding with OutcomeTrue is returned for each security policy file.
-If no links are found, one finding with OutcomeFalse is returned for each file.
+If no links are found, one finding with OutcomeFalse is returned for each security policy file.
 If no security policy files are found, one finding with OutcomeFalse is returned.
 
 
