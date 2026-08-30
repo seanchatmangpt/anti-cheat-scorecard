@@ -22,7 +22,6 @@ func TestDetect(t *testing.T) {
 		{"not claim", "Replay is required before promotion.", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect("receipt.md", []byte(tc.body))); got != tc.want {

@@ -24,7 +24,6 @@ func TestDetect(t *testing.T) {
 		{"incomplete", "subject_sha = \"" + a + "\"\n", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect("receipt.toml", []byte(tc.body))); got != tc.want {

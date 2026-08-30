@@ -23,7 +23,6 @@ func TestDetect(t *testing.T) {
 		{"no exact claim", "ref: main\n", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect("court.yml", []byte(tc.body))); got != tc.want {

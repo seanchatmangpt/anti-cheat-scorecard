@@ -22,7 +22,6 @@ func TestDetect(t *testing.T) {
 		{"history only", "Keep the historical receipt for audit.", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect("STANDING.md", []byte(tc.body))); got != tc.want {

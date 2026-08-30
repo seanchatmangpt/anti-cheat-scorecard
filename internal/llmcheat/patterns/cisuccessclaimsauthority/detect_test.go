@@ -22,7 +22,6 @@ func TestDetect(t *testing.T) {
 		{"plain pass", "CI passed all tests.", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect("STATUS.md", []byte(tc.body))); got != tc.want {

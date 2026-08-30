@@ -22,7 +22,6 @@ func TestDetect(t *testing.T) {
 		{"authored", "court.yml", "status: ALIVE\n", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect(tc.path, []byte(tc.body))); got != tc.want {

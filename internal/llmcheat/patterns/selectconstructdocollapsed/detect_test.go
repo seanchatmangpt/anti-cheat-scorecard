@@ -22,7 +22,6 @@ func TestDetect(t *testing.T) {
 		{"partial", "SELECT and CONSTRUCT share parsing only.", 0},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if got := len(d.Detect("ARCH.md", []byte(tc.body))); got != tc.want {
