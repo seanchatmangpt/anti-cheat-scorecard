@@ -47,7 +47,7 @@ type Match struct {
 	// of: fabricated-claims, hollow-implementation, test-integrity-violation,
 	// generated-artifact-tampering, semantic-web-integrity,
 	// determinism-and-provenance-violation, complexity-and-surface-obfuscation,
-	// option-space-collapse.
+	// option-space-collapse, governed-execution-integrity.
 	Category string
 	// Path is the file-relative path the match was found in.
 	Path string
@@ -69,7 +69,7 @@ type Pattern interface {
 	// It must be unique across every registered pattern (Register panics on
 	// a duplicate) and must match the const ID the pattern package defines.
 	ID() string
-	// Category is one of the eight Anti-Cheat categories listed on Match.Category.
+	// Category is one of the nine Anti-Cheat categories listed on Match.Category.
 	Category() string
 	// Detect scans one file's full content and returns zero or more matches.
 	// Implementations must be pure and side-effect-free: no filesystem, no
