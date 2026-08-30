@@ -22,9 +22,6 @@ on:
 permissions:
   contents: read
 
-env:
-  GO_VERSION: stable
-
 jobs:
   integration-trusted:
     runs-on: ubuntu-latest
@@ -41,8 +38,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: ${{ env.GO_VERSION }}
-          check-latest: true
+          go-version-file: go.mod
           cache: false # we manually manage caches below
       - id: go-cache-paths
         run: |
@@ -61,7 +57,7 @@ jobs:
 
       - name: Prepare test env
         run: |
-            go mod download
+          go mod download
 
       - name: Run GITHUB_TOKEN E2E
         timeout-minutes: 30

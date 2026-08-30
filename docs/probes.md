@@ -452,6 +452,20 @@ If no patterns in this category are found anywhere in the repository, the probe 
 If no patterns in this category are found anywhere in the repository, the probe returns a single OutcomeTrue finding.
 
 
+## llmCheatOptionSpaceCollapse
+
+**Lifecycle**: experimental
+
+**Description**: Premature collapse of reversible lawful options
+
+**Motivation**: DfCM work must preserve viable alternatives until evidence justifies a selection. Premature commitment, missing reserve routes, and irreversible action without rollback shrink the lawful option space before comparison is complete and can turn one failed path into a false terminal state.
+
+**Implementation**: The implementation filters the shared Anti-Cheat result for the "option-space-collapse" category and returns one finding for each matched DfCM violation across non-vendored source, workflow, and documentation surfaces.
+
+**Outcomes**: If one or more option-space-collapse patterns are found, the probe returns one OutcomeFalse finding per match, naming the pattern ID, file, and line.
+If no option-space-collapse patterns are found, the probe returns a single OutcomeTrue finding.
+
+
 ## llmCheatSemanticWebIntegrity
 
 **Lifecycle**: experimental

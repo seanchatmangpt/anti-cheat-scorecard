@@ -3,16 +3,8 @@ name: Anti-Cheat Chicago
 on:
   pull_request:
     branches: [main]
-    paths:
-      - "internal/llmcheat/**"
-      - "checks/raw/anti_cheat*"
-      - ".github/workflows/anti-cheat-chicago.yml"
   push:
     branches: [main]
-    paths:
-      - "internal/llmcheat/**"
-      - "checks/raw/anti_cheat*"
-      - ".github/workflows/anti-cheat-chicago.yml"
 
 permissions:
   contents: read
