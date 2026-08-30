@@ -1,0 +1,4 @@
+name: llmCheatGovernedExecutionIntegrity
+description: Detects governed-execution violations where immutable subject identity, receipts, replay, generated-source authority, typed refusals, or SELECT/CONSTRUCT/DO separation are bypassed
+requirement: The repository should bind standing to exact subjects and fresh evidence, keep generated projections non-authoritative, preserve typed refusal boundaries, separate SELECT/CONSTRUCT/DO, and treat CI as evidence transport rather than authority
+type: code
