@@ -338,7 +338,7 @@ func TestGetEnabled(t *testing.T) {
 			argsChecks:            []string{},
 			requiredRequestTypes:  []checker.RequestType{checker.FileBased, checker.CommitBased},
 			repoType:              clients.RepoTypeGitHub,
-			expectedEnabledChecks: 7, // All checks which are FileBased and CommitBased
+			expectedEnabledChecks: 8, // All checks which are FileBased and CommitBased
 			expectedError:         false,
 		},
 		{
