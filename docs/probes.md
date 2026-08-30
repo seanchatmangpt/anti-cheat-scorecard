@@ -685,7 +685,7 @@ If the project does not run any SAST tools successfully on every pull request be
 **Implementation**: The implementation looks for strings "http(s)://" to find URLs; and for strings "...@..." for email addresses.
 
 **Outcomes**: If links are found, one finding with OutcomeTrue is returned for each security policy file.
-If no links are found, one finding with OutcomeFalse is returned for each security policy file.
+If no links are found, one finding with OutcomeFalse is returned for each file.
 If no security policy files are found, one finding with OutcomeFalse is returned.
 
 
@@ -716,7 +716,7 @@ If no security policy is found, one finding with OutcomeFalse is returned.
 
 **Outcomes**: If information about the disclosure process is found in a security policy file, the probe returns one finding with OutcomeTrue for each file.
 If no information about the disclosure process is found, the probe returns one finding with OutcomeFalse for each file.
-If no security policy is found, one finding with OutcomeFalse is returned.
+If no security policy is found, the probe returns one finding with OutcomeFalse.
 
 
 ## securityPolicyPresent
