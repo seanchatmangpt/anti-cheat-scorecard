@@ -22,6 +22,7 @@ import (
 	"github.com/ossf/scorecard/v5/probes/llmCheatDeterminismViolation"
 	"github.com/ossf/scorecard/v5/probes/llmCheatFabricatedClaims"
 	"github.com/ossf/scorecard/v5/probes/llmCheatGeneratedArtifactTampering"
+	"github.com/ossf/scorecard/v5/probes/llmCheatGovernedExecutionIntegrity"
 	"github.com/ossf/scorecard/v5/probes/llmCheatHollowImplementation"
 	"github.com/ossf/scorecard/v5/probes/llmCheatOptionSpaceCollapse"
 	"github.com/ossf/scorecard/v5/probes/llmCheatSemanticWebIntegrity"
@@ -32,7 +33,7 @@ import (
 //
 // Each probe wraps one category of the shared internal/llmcheat pattern
 // registry. A probe is clean when it produced zero OutcomeFalse findings;
-// the score is the proportion of the eight admitted categories that are clean.
+// the score is the proportion of the nine admitted categories that are clean.
 func AntiCheat(name string,
 	findings []finding.Finding,
 	dl checker.DetailLogger,
@@ -46,6 +47,7 @@ func AntiCheat(name string,
 		llmCheatDeterminismViolation.Probe,
 		llmCheatComplexityObfuscation.Probe,
 		llmCheatOptionSpaceCollapse.Probe,
+		llmCheatGovernedExecutionIntegrity.Probe,
 	}
 
 	if !finding.UniqueProbesEqual(findings, expectedProbes) {

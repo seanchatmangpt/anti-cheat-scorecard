@@ -23,22 +23,30 @@ import (
 
 func TestProductionAggregatorRegistersChicagoAndLandedFleet(t *testing.T) {
 	all := llmcheat.All()
-	if len(all) != 57 {
-		t.Fatalf("production aggregator registered %d patterns, want exactly 57 admitted detectors", len(all))
+	if len(all) != 65 {
+		t.Fatalf("production aggregator registered %d patterns, want exactly 65 admitted detectors", len(all))
 	}
 
 	want := map[string]bool{
-		"claim-verified-without-run":             false,
-		"dfcm-plan-without-reserve":              false,
-		"go-syntax-graph-chicago":                false,
-		"hand-edited-generated-file-marker":      false,
-		"interaction-only-assertion":             false,
-		"irreversible-action-without-rollback":   false,
-		"non-chicago-acceptance-laundering":      false,
-		"non-chicago-evidence":                   false,
-		"premature-option-collapse":              false,
-		"terminal-failure-without-reserve":       false,
-		"unverified-benchmark-numbers":           false,
+		"ci-success-claims-authority":              false,
+		"claim-verified-without-run":               false,
+		"dfcm-plan-without-reserve":                false,
+		"exact-head-claim-with-floating-ref":       false,
+		"generated-projection-claims-authority":    false,
+		"go-syntax-graph-chicago":                  false,
+		"hand-edited-generated-file-marker":        false,
+		"historical-receipt-promotes-current-head": false,
+		"interaction-only-assertion":               false,
+		"irreversible-action-without-rollback":     false,
+		"non-chicago-acceptance-laundering":        false,
+		"non-chicago-evidence":                     false,
+		"premature-option-collapse":                false,
+		"receipt-subject-head-mismatch":            false,
+		"replay-claim-without-evidence":            false,
+		"select-construct-do-collapsed":            false,
+		"terminal-failure-without-reserve":         false,
+		"untyped-refused-status":                   false,
+		"unverified-benchmark-numbers":             false,
 	}
 	for _, p := range all {
 		if _, ok := want[p.ID()]; ok {
